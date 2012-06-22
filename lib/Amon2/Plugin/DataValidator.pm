@@ -1,7 +1,50 @@
-package Amon2::Plugin::DataValidator;
 use strict;
 use warnings;
-use Data::Validator;
+
+package Data::Validator::Filterable;
+use Mouse;
+extends 'Data::Validator';
+
+has filter_map => (
+    is  => 'ro',
+    isa => 'HashRef',
+);
+
+no Mouse;
+
+sub BUILDARGS {
+    my ($class, @mapping) = @_;
+    my $args = {};
+    my %filter_map;
+    my @mapping_4_super;
+    while ( my ($name, $rule) = splice @mapping, 0, 2 ) {
+        if ( ref($rule) eq 'HASH'  &&  ref($rule->{filter}) eq 'CODE' ) {
+            $filter_map{$name} = $rule->{filter};
+            delete $rule->{filter};
+        }
+        push @mapping_4_super, $name, $rule;
+    }
+    $args = $class->SUPER::BUILDARGS(@mapping_4_super);
+    $args->{filter_map} = \%filter_map;
+    return $args;
+}
+
+### override
+sub validate {
+    my $self = shift;
+    my $args = $self->initialize(@_);  # isa Hashref
+    my $fm = $self->filter_map;
+    for my $k ( keys %$args ) {
+        my $f = $fm->{$k};
+        next  unless $f && ref($f) eq 'CODE';
+        $args->{$k} = $f->($args->{$k});
+    }
+    return $self->SUPER::validate($args);
+}
+
+1;
+
+package Amon2::Plugin::DataValidator;
 
 our $VERSION = '0.01';
 
@@ -13,7 +56,7 @@ sub init {
 
 sub _new_validator {
     my ($self, %params) = @_;
-    return Data::Validator->new(%params);
+    return Data::Validator::Filterable->new(%params);
 }
 
 1;
@@ -36,6 +79,7 @@ Amon2::Plugin::DataValidator -
   my $validator = $c->new_validator(
       foo => { isa => 'Str' },
       bar => { isa => 'Num' },
+      baz => { isa => 'Str', filter => { uc $_[0] } },
   );
 
 =head1 DESCRIPTION

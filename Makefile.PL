@@ -11,6 +11,7 @@ WriteMakefile(
         'ExtUtils::Install'   => 1.46,
 
         'Amon2'               => 3.32,
+        'Mouse'               => 0.97,
         'Data::Validator'     => 0.09,
     },
     test => {
