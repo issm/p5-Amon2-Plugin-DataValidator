@@ -1,5 +1,8 @@
 Revision history for Perl extension Amon2::Plugin::DataValidator
 
+0.03    Sun Mar 31 13:35:00 2013
+        - can get as $c->validator, same as old-style $c->new_validator
+
 0.02    Fri Jun 22 20:40:00 2012
         - validation rule option "filter" is available.
 
