@@ -51,10 +51,11 @@ our $VERSION = '0.02';
 sub init {
     my ($class, $context_class, $config) = @_;
     no strict 'refs';
-    *{"$context_class\::new_validator"} = \&_new_validator;
+    *{"$context_class\::validator"}     = \&_validator;
+    *{"$context_class\::new_validator"} = \&_validator;
 }
 
-sub _new_validator {
+sub _validator {
     my ($self, %params) = @_;
     return Data::Validator::Filterable->new(%params);
 }

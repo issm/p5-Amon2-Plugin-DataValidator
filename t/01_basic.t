@@ -14,6 +14,7 @@ use Test::More;
 
 my $c = Foo->bootstrap;
 isa_ok $c, 'Foo';
+ok $c->can('validator');
 ok $c->can('new_validator');
 
 my $v = $c->new_validator( foo => 'Str' );
