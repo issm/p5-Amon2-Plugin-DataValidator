@@ -3,6 +3,7 @@ use warnings;
 
 package Data::Validator::Amon2;
 use Mouse;
+use Scalar::Util qw/blessed/;
 extends 'Data::Validator';
 
 has filter_map => (
@@ -31,8 +32,11 @@ sub BUILDARGS {
 
 ### override
 sub validate {
-    my $self = shift;
-    my $args = $self->initialize(@_);  # isa Hashref
+    my ($self, @args) = @_;
+    if ( blessed($args[0])  &&  $args[0]->isa('Plack::Request') ) {
+        $args[0] = $args[0]->parameters->mixed;
+    }
+    my $args = $self->initialize(@args);  # isa Hashref
     my $fm = $self->filter_map;
     for my $k ( keys %$args ) {
         my $f = $fm->{$k};

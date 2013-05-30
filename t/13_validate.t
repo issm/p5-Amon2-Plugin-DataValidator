@@ -11,6 +11,12 @@ package main;
 use strict;
 use warnings;
 use Test::More;
+use Plack::Test;
+use Test::Requires {
+    'HTTP::Message' => '6.06',
+};
+use Plack::Request;
+use HTTP::Request::Common;
 
 my $c = Foo->bootstrap;
 
@@ -29,5 +35,33 @@ subtest 'filter' => sub {
     is $q->{bar}, 'FUGA';
 };
 
+subtest 'arg is-a Plack::Request' => sub {
+    my $app = sub {
+        my $env = shift;
+        my $req = Plack::Request->new($env);
+        my $v = $c->new_validator(
+            foobar => { isa => 'Int' },
+        )->with('NoThrow');
+        $v->validate($req);
+
+        if ( $v->has_errors ) {
+            return [ 500, [ 'Content-Type' => 'text/plain' ], [ 'validation failed' ] ];
+        }
+        return [ 200, [ 'Content-Type' => 'text/plain' ], [ 'validation passed' ] ];
+    };
+
+    test_psgi $app, sub {
+        my $cb = shift;
+        my ($req, $res);
+
+        $req = GET '/';
+        $res = $cb->($req);
+        is $res->code, 500;
+
+        $req = GET '/?foobar=123';
+        $res = $cb->($req);
+        is $res->code, 200;
+    };
+};
 
 done_testing;
