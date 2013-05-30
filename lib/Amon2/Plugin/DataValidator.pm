@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-package Data::Validator::Filterable;
+package Data::Validator::Amon2;
 use Mouse;
 extends 'Data::Validator';
 
@@ -57,7 +57,7 @@ sub init {
 
 sub _validator {
     my ($self, %params) = @_;
-    return Data::Validator::Filterable->new(%params);
+    return Data::Validator::Amon2->new(%params);
 }
 
 1;

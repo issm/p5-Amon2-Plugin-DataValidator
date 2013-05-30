@@ -27,7 +27,7 @@ my @roles = qw/
     Croak
 /;
 for (@roles) {
-    isa_ok $v->with($_), 'Data::Validator::Filterable';
+    isa_ok $v->with($_), 'Data::Validator::Amon2';
 }
 
 

@@ -18,7 +18,7 @@ ok $c->can('validator');
 ok $c->can('new_validator');
 
 my $v = $c->new_validator( foo => 'Str' );
-isa_ok $v, 'Data::Validator::Filterable';
+isa_ok $v, 'Data::Validator::Amon2';
 isa_ok $v->filter_map, 'HASH';
 
 
