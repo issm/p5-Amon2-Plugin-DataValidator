@@ -50,7 +50,7 @@ sub validate {
 
 package Amon2::Plugin::DataValidator;
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 sub init {
     my ($class, $context_class, $config) = @_;
