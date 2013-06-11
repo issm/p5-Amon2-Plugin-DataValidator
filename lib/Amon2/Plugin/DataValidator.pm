@@ -34,7 +34,10 @@ sub BUILDARGS {
 sub validate {
     my ($self, @args) = @_;
     if ( blessed($args[0])  &&  $args[0]->isa('Plack::Request') ) {
-        $args[0] = $args[0]->parameters->mixed;
+        $args[0] = {
+            %{ $args[0]->parameters->mixed || {} },
+            %{ $args[0]->uploads->mixed || {} },
+        };
     }
     my $args = $self->initialize(@args);  # isa Hashref
     my $fm = $self->filter_map;
