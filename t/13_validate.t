@@ -114,4 +114,42 @@ subtest 'arg is-a Plack::Request, includes file uploads' => sub {
     };
 };
 
+subtest 'default' => sub {
+    my $v = $c->validator(
+        foo => { isa => 'Int', default => 5 },
+        bar => {
+            isa => 'Int', default => sub {
+                my ($self, $rule, $args) = @_;
+                return $args->{foo} + 5;
+            },
+        },
+    );
+
+    my @case = (
+        +{
+            args     => +{},
+            expected => +{ foo => 5, bar => 10 },
+        },
+        +{
+            args     => +{ foo => 3 },
+            expected => +{ foo => 3, bar => 8 },
+        },
+        +{
+            args     => +{ bar => 3 },
+            expected => +{ foo => 5, bar => 3 },
+        },
+        +{
+            args     => +{ foo => 2, bar => 3 },
+            expected => +{ foo => 2, bar => 3 },
+        },
+    );
+
+    my $i = 0;
+    for my $case ( @case ) {
+        my $q = $v->validate( $case->{args} );
+        my $memo = sprintf '%d-th case', $i++;
+        is_deeply $q, $case->{expected}, $memo;
+    }
+};
+
 done_testing;
