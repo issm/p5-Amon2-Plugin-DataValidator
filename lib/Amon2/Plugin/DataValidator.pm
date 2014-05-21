@@ -63,8 +63,8 @@ sub init {
 }
 
 sub _validator {
-    my ($self, %params) = @_;
-    return Data::Validator::Amon2->new(%params);
+    my ($self, @args) = @_;
+    return Data::Validator::Amon2->new(@args);
 }
 
 1;
