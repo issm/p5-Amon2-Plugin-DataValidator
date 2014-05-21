@@ -1,5 +1,8 @@
 Revision history for Perl extension Amon2::Plugin::DataValidator
 
+0.06    Web May 21 14:16:00 2014
+        - &_validate: fetching args is fixed (GH #2)
+
 0.05    Tue Jun 11 22:03:00 2013
         - ->validate($req) also validates content of $req->uploads
 
